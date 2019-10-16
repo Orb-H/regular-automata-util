@@ -34,9 +34,9 @@ public class State {
 	}
 
 	/**
-	 * Adds new destination state for input character {@code sym}.
+	 * Adds new destination state for input symbol {@code sym}.
 	 * 
-	 * @param sym - An input character.
+	 * @param sym - An input symbol.
 	 * @param dst - A new destination state for {@code sym}.
 	 * @return {@code true} if {@code dst} is a new destination state for
 	 *         {@code sym}. {@code false} if {@code dst} is already registered as a
@@ -52,13 +52,13 @@ public class State {
 	}
 
 	/**
-	 * Returns all the next states for input character {@code sym}.
+	 * Returns all the next states for input symbol {@code sym}.
 	 * 
-	 * @param sym - An input character.
+	 * @param sym - An input symbol.
 	 * @return A set of next states for {@code sym}.
 	 */
 	public Set<State> getNext(String sym) {
-		return next.getOrDefault(sym, null);
+		return next.getOrDefault(sym, new HashSet<>());
 	}
 
 	/**
