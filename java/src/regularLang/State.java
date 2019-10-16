@@ -1,5 +1,6 @@
 package regularLang;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +22,10 @@ public class State {
 	 * Next states determined by input.
 	 */
 	private Map<Symbol, Set<State>> next;
+	/**
+	 * Indicates whether this is a final state
+	 */
+	private boolean isFinal;
 
 	/**
 	 * Creates a new state with given name. Since name is considered as ID, there
@@ -67,12 +72,45 @@ public class State {
 	}
 
 	/**
+	 * Returns ех-closure of this state. Equivalent with
+	 * {@code getNext(Symbol.EPSILON);}.
+	 * 
+	 * @return ех-closure of this state.
+	 */
+	public Set<State> getEClosure() {
+		return getNext(Symbol.EPSILON);
+	}
+
+	/**
 	 * Returns name of this state.
 	 * 
 	 * @return A name of state.
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Returns whether this state is a final state or non-final state.
+	 * 
+	 * @return {@code true} if this state is a final state.
+	 */
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	/**
+	 * Set this state as a final state.
+	 */
+	public void setFinal() {
+		isFinal = true;
+	}
+
+	/**
+	 * Set this state as a non-final state.
+	 */
+	public void setNonFinal() {
+		isFinal = false;
 	}
 
 	@Override
@@ -82,6 +120,18 @@ public class State {
 		if (other.getClass().equals(this.getClass()))
 			return name.equals(((State) other).name);
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder post = new StringBuilder();
+		next.entrySet()
+				.forEach(e -> post.append("  --|" + e.getKey() + "|--> "
+						+ e.getValue().stream().reduce("", (s, t) -> (s.equals("") ? s : s + ", ") + t.getName(),
+								(s, t) -> (s.equals("") ? s : s + ", ") + t)
+						+ "\n"));
+
+		return name + (isFinal ? "(final)" : "") + "\n" + post;
 	}
 
 }

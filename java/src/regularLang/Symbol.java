@@ -49,4 +49,9 @@ public class Symbol {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return symbol;
+	}
+
 }
