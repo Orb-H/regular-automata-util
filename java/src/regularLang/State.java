@@ -1,5 +1,6 @@
 package regularLang;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class State {
 	/**
 	 * Next states determined by input.
 	 */
-	private Map<String, Set<State>> next;
+	private Map<Symbol, Set<State>> next;
 
 	/**
 	 * Creates a new state with given name. Since name is considered as ID, there
@@ -31,6 +32,10 @@ public class State {
 	 */
 	public State(String name) {
 		this.name = name;
+		next = new HashMap<>();
+		Set<State> cur = new HashSet<>();
+		cur.add(this);
+		next.put(Symbol.EPSILON, cur);
 	}
 
 	/**
@@ -42,7 +47,7 @@ public class State {
 	 *         {@code sym}. {@code false} if {@code dst} is already registered as a
 	 *         destination state for {@code sym}.
 	 */
-	public boolean addNext(String sym, State dst) {
+	public boolean addNext(Symbol sym, State dst) {
 		Set<State> val = next.getOrDefault(sym, new HashSet<>());
 		if (val.add(dst)) {
 			next.put(sym, val);
@@ -57,7 +62,7 @@ public class State {
 	 * @param sym - An input symbol.
 	 * @return A set of next states for {@code sym}.
 	 */
-	public Set<State> getNext(String sym) {
+	public Set<State> getNext(Symbol sym) {
 		return next.getOrDefault(sym, new HashSet<>());
 	}
 
