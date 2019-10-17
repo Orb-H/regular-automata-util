@@ -28,7 +28,7 @@ import java.util.function.Function;
  * </ul>
  * 
  * @author Orb_H
- * @since 2019-10-15
+ * @since 2019-10-16
  */
 public class RegularLanguage implements Function<String, Boolean> {
 
@@ -102,12 +102,21 @@ public class RegularLanguage implements Function<String, Boolean> {
 	}
 
 	/**
-	 * Returns a set of state existing in this language.
+	 * Returns a set of states of this language.
 	 * 
-	 * @return A set of state.
+	 * @return A set of states.
 	 */
 	public Set<State> getStates() {
 		return states;
+	}
+
+	/**
+	 * Returns a set of possible symbols of this language.
+	 * 
+	 * @return A set of symbols.
+	 */
+	public Set<Symbol> getSymbols() {
+		return symbol;
 	}
 
 	/**

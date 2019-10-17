@@ -1,6 +1,5 @@
 package regularLang;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -126,7 +125,7 @@ public class State {
 	public String toString() {
 		StringBuilder post = new StringBuilder();
 		next.entrySet()
-				.forEach(e -> post.append("  --|" + e.getKey() + "|--> "
+				.forEach(e -> post.append("  --|" + (e.getKey().equals(Symbol.EPSILON) ? "(ех)" : e.getKey()) + "|--> "
 						+ e.getValue().stream().reduce("", (s, t) -> (s.equals("") ? s : s + ", ") + t.getName(),
 								(s, t) -> (s.equals("") ? s : s + ", ") + t)
 						+ "\n"));
