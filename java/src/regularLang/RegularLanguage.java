@@ -111,6 +111,26 @@ public class RegularLanguage implements Function<String, Boolean> {
 	}
 
 	/**
+	 * Returns a start state of this language.
+	 * 
+	 * @return A Start state.
+	 */
+	public State getStartState() {
+		return start;
+	}
+
+	/**
+	 * Returns a set of final states of this language.
+	 * 
+	 * @return A set of final states.
+	 */
+	public Set<State> getFinalState() {
+		Set<State> state = new HashSet<>();
+		states.stream().filter((s) -> s.isFinal()).forEach((s) -> state.add(s));
+		return state;
+	}
+
+	/**
 	 * Returns a set of possible symbols of this language.
 	 * 
 	 * @return A set of symbols.
