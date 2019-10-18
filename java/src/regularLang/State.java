@@ -124,11 +124,10 @@ public class State {
 	@Override
 	public String toString() {
 		StringBuilder post = new StringBuilder();
-		next.entrySet()
-				.forEach(e -> post.append("  --|" + (e.getKey().equals(Symbol.EPSILON) ? "(ех)" : e.getKey()) + "|--> "
-						+ e.getValue().stream().reduce("", (s, t) -> (s.equals("") ? s : s + ", ") + t.getName(),
-								(s, t) -> (s.equals("") ? s : s + ", ") + t)
-						+ "\n"));
+		next.entrySet().forEach(e -> post.append("  --|"
+				+ (e.getKey().equals(Symbol.EPSILON) ? "(ех)" : e.getKey()) + "|--> " + e.getValue().stream().reduce("",
+						(s, t) -> Utils.mergeByComma.apply(s, t.getName()), (s, t) -> Utils.mergeByComma.apply(s, t))
+				+ "\n"));
 
 		return name + (isFinal ? "(final)" : "") + "\n" + post;
 	}
