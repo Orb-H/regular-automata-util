@@ -214,9 +214,7 @@ public class RegularLanguage implements Function<String, Boolean> {
 			s = t;
 		}
 
-		if (s.stream().anyMatch((state) -> state.isFinal()))
-			return true;
-		return false;
+		return s.stream().anyMatch((state) -> state.isFinal());
 	}
 
 }
