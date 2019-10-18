@@ -2,6 +2,7 @@ package regularLang;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -99,11 +100,15 @@ public class TransitionTableUtil {
 	 *                <code>{?((\w)(,\s*\w)*)?}?</code>
 	 * @return A regular language constructed using given transition table.
 	 */
-	public static RegularLanguage convert(List<String> states, List<String> symbols, List<String> nexts) {
+	public static RegularLanguage convert(List<String> states, List<String> symbols, List<String> nexts, String start,
+			String... end) {
 		RegularLanguage rl = new RegularLanguage(symbols, states);
-		IntStream.range(0, states.size())
-				.forEachOrdered((i) -> IntStream.range(0, symbols.size()).forEachOrdered((j) -> {
-				}));
+		Iterator<String> it = nexts.iterator();
+		IntStream.range(0, states.size()).forEachOrdered((i) -> IntStream.range(0, symbols.size()).forEachOrdered(
+				(j) -> Arrays.asList(it.next().split("[\\s{},]")).stream().filter((s) -> s.length() > 0).forEach(
+						(s) -> rl.findState(states.get(i)).addNext(rl.findSymbol(symbols.get(j)), rl.findState(s)))));
+		rl.setStartState(start);
+		Arrays.asList(end).stream().forEach((e) -> rl.findState(e).setFinal());
 		return rl;
 	}
 
