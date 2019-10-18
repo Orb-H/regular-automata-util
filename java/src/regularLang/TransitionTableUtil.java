@@ -24,47 +24,42 @@ public class TransitionTableUtil {
 		symbols.add(0, Symbol.EPSILON);
 		String[][] next = new String[states.size()][symbols.size()];
 
-		for (int i = 0; i < next.length; i++) {
-			for (int j = 0; j < next[0].length; j++) {
-				next[i][j] = "{" + states.get(i).getNext(symbols.get(j)).stream().reduce("",
-						(s, t) -> Utils.mergeByComma.apply(s, t.getName()), (s, t) -> Utils.mergeByComma.apply(s, t))
-						+ "}";
-			}
-		}
+		IntStream.range(0, next.length)
+				.forEach((i) -> IntStream.range(0, next[0].length)
+						.forEach((j) -> next[i][j] = states.get(i).getNext(symbols.get(j)).stream().reduce("",
+								(s, t) -> Utils.mergeByComma.apply(s, t.getName()),
+								(s, t) -> Utils.mergeByComma.apply(s, t))));
 
 		List<String> stateNames = Arrays.asList(IntStream.range(0, states.size()).mapToObj((i) -> {
 			State s = states.get(i);
-			if (rl.getStartState().equals(s)) {
-				return "->" + s.getName();
-			} else if (s.isFinal()) {
-				return "*" + s.getName();
-			}
+			if (rl.getStartState().equals(s))
+				return "->" + s.getName() + "  ";
+			else if (s.isFinal())
+				return "*" + s.getName() + " ";
 			return s.getName();
 		}).toArray(String[]::new));
-		System.out.println(stateNames.size());
 
 		int[] max = new int[next[0].length + 1];
 		max[0] = stateNames.stream().reduce(Integer.MIN_VALUE, (s, t) -> Integer.max(s, t.length()), Integer::max);
 
-		for (int i = 1; i <= next[0].length; i++) {
-			final int k = i - 1;
-			max[i] = IntStream.range(0, next.length).reduce(0, (j, l) -> Integer.max(j, next[l][k].length()));
-		}
+		IntStream.range(0, next[0].length).forEach((i) -> max[i + 1] = Integer
+				.max(IntStream.range(0, next.length).reduce(0, (j, l) -> Integer.max(j, next[l][i].length())), 3));
 
-		System.out.println("|" + center("", max[0]) + "|" + center("(ех)", max[0]) + IntStream.range(1, next[0].length)
+		System.out.println(line(IntStream.range(0, next[0].length + 1).map((i) -> max[i]).reduce(0, (s, t) -> s + t)
+				+ next[0].length + 2));
+		System.out.println("|" + center("", max[0]) + "|" + center("(ех)", max[1]) + IntStream.range(1, next[0].length)
 				.mapToObj((i) -> "|" + center(symbols.get(i).getSymbol(), max[i + 1])).reduce("", (s, t) -> s + t)
 				+ "|");
 		System.out.println("|" + IntStream.range(0, next[0].length + 1).mapToObj((i) -> line(max[i]) + "|").reduce("",
 				(s, t) -> s + t));
 
-		for (int i = 0; i < next.length; i++) {
-			final int k = i;
-			System.out
-					.println("|"
-							+ center(stateNames.get(i), max[0]) + IntStream.range(0, next[0].length)
-									.mapToObj((j) -> "|" + center(next[k][j], max[j + 1])).reduce("", (s, t) -> s + t)
-							+ "|");
-		}
+		IntStream.range(0, next.length)
+				.forEach((i) -> System.out.println("|"
+						+ center(stateNames.get(i), max[0]) + IntStream.range(0, next[0].length)
+								.mapToObj((j) -> "|" + center(next[i][j], max[j + 1])).reduce("", (s, t) -> s + t)
+						+ "|"));
+		System.out.println(line(IntStream.range(0, next[0].length + 1).map((i) -> max[i]).reduce(0, (s, t) -> s + t)
+				+ next[0].length + 2));
 	}
 
 	/**
@@ -93,6 +88,23 @@ public class TransitionTableUtil {
 		char dash[] = new char[w];
 		Arrays.fill(dash, '-');
 		return new String(dash);
+	}
+
+	/**
+	 * Converts a transition table to corresponding regular language.
+	 * 
+	 * @param states  A list of states.
+	 * @param symbols A list of symbols.
+	 * @param nexts   A list of next states. Each String should match
+	 *                <code>{?((\w)(,\s*\w)*)?}?</code>
+	 * @return A regular language constructed using given transition table.
+	 */
+	public static RegularLanguage convert(List<String> states, List<String> symbols, List<String> nexts) {
+		RegularLanguage rl = new RegularLanguage(symbols, states);
+		IntStream.range(0, states.size())
+				.forEachOrdered((i) -> IntStream.range(0, symbols.size()).forEachOrdered((j) -> {
+				}));
+		return rl;
 	}
 
 }
