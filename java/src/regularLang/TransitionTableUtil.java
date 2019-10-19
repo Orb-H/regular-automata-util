@@ -94,10 +94,12 @@ public class TransitionTableUtil {
 	/**
 	 * Converts a transition table to corresponding regular language.
 	 * 
-	 * @param states  A list of states.
-	 * @param symbols A list of symbols.
-	 * @param nexts   A list of next states. Each String should match
+	 * @param states  - A list of states.
+	 * @param symbols - A list of symbols.
+	 * @param nexts   - A list of next states. Each String should match
 	 *                <code>{?((\w)(,\s*\w)*)?}?</code>
+	 * @param start   - A start state.
+	 * @param end     - A series of final states.
 	 * @return A regular language constructed using given transition table.
 	 */
 	public static RegularLanguage convert(List<String> states, List<String> symbols, List<String> nexts, String start,
