@@ -17,7 +17,7 @@ public class TransitionTableUtil {
 	/**
 	 * Prints a regular language into a format of transition table.
 	 * 
-	 * @param rl A regular language to print.
+	 * @param rl - A regular language to print.
 	 */
 	public static void printTT(RegularLanguage rl) {
 		List<State> states = new ArrayList<>(rl.getStates());

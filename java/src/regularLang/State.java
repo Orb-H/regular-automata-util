@@ -71,10 +71,10 @@ public class State {
 	}
 
 	/**
-	 * Returns ¥å-closure of this state. Equivalent with
+	 * Returns ï¿½ï¿½-closure of this state. Equivalent with
 	 * {@code getNext(Symbol.EPSILON);}.
 	 * 
-	 * @return ¥å-closure of this state.
+	 * @return ï¿½ï¿½-closure of this state.
 	 */
 	public Set<State> getEClosure() {
 		return getNext(Symbol.EPSILON);
@@ -125,7 +125,7 @@ public class State {
 	public String toString() {
 		StringBuilder post = new StringBuilder();
 		next.entrySet().forEach(e -> post.append("  --|"
-				+ (e.getKey().equals(Symbol.EPSILON) ? "(¥å)" : e.getKey()) + "|--> " + e.getValue().stream().reduce("",
+				+ (e.getKey().equals(Symbol.EPSILON) ? "(Îµ)" : e.getKey()) + "|--> " + e.getValue().stream().reduce("",
 						(s, t) -> Utils.mergeByComma.apply(s, t.getName()), (s, t) -> Utils.mergeByComma.apply(s, t))
 				+ "\n"));
 
