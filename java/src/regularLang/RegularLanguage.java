@@ -28,7 +28,7 @@ import java.util.function.Function;
  * </ul>
  * 
  * @author Orb_H
- * @since 2019-10-15
+ * @since 2019-10-16
  */
 public class RegularLanguage implements Function<String, Boolean> {
 
@@ -102,12 +102,56 @@ public class RegularLanguage implements Function<String, Boolean> {
 	}
 
 	/**
-	 * Returns a set of state existing in this language.
+	 * Returns a set of states of this language.
 	 * 
-	 * @return A set of state.
+	 * @return A set of states.
 	 */
 	public Set<State> getStates() {
 		return states;
+	}
+
+	/**
+	 * Returns a start state of this language.
+	 * 
+	 * @return A Start state.
+	 */
+	public State getStartState() {
+		return start;
+	}
+
+	/**
+	 * Set a start state with given id.
+	 * 
+	 * @param s - ID of state to set as a start state.
+	 * @return {@code true} if start state is successfully set.
+	 */
+	public boolean setStartState(String s) {
+		State st;
+		if ((st = findState(s)) != null) {
+			this.start = findState(s);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a set of final states of this language.
+	 * 
+	 * @return A set of final states.
+	 */
+	public Set<State> getFinalState() {
+		Set<State> state = new HashSet<>();
+		states.stream().filter((s) -> s.isFinal()).forEach((s) -> state.add(s));
+		return state;
+	}
+
+	/**
+	 * Returns a set of possible symbols of this language.
+	 * 
+	 * @return A set of symbols.
+	 */
+	public Set<Symbol> getSymbols() {
+		return symbol;
 	}
 
 	/**
@@ -185,9 +229,7 @@ public class RegularLanguage implements Function<String, Boolean> {
 			s = t;
 		}
 
-		if (s.stream().anyMatch((state) -> state.isFinal()))
-			return true;
-		return false;
+		return s.stream().anyMatch((state) -> state.isFinal());
 	}
 
 }
