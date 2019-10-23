@@ -69,11 +69,11 @@ public class RegularLanguage implements Function<String, Boolean> {
 	 * Creates a language with given symbols and states.
 	 * 
 	 * @param symbols - Possible symbols of language.
-	 * @param state   - States of language.
+	 * @param states  - States of language.
 	 */
-	public RegularLanguage(Iterable<String> symbols, Iterable<String> state) {
+	public RegularLanguage(Iterable<String> symbols, Iterable<String> states) {
 		this(symbols);
-		state.forEach(s -> states.add(new State(s)));
+		states.forEach(s -> this.states.add(new State(s)));
 	}
 
 	/**
