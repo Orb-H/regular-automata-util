@@ -2,6 +2,7 @@ package regularLang;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -49,56 +50,235 @@ public class RegularLanguage implements Function<String, Boolean> {
 	/**
 	 * Default Constructor. Creates a language without any information.
 	 */
-	public RegularLanguage() {
+	private RegularLanguage() {
 		states = new HashSet<>();
 		start = null;
 		symbol = new HashSet<>();
 	}
 
 	/**
-	 * Creates a language with symbols.
+	 * A builder for {@link RegularLanguage}. This builder now replaces all the
+	 * constructors of {@link RegularLanguage} and original constructors are
+	 * removed.
 	 * 
-	 * @param symbols - Possible symbols in language.
+	 * @author Orb_H
+	 * @since 2019-10-24
 	 */
-	public RegularLanguage(Iterable<String> symbols) {
-		this();
-		symbols.forEach((s) -> symbol.add(new Symbol(s)));
-	}
+	static class Builder {
+		/**
+		 * A set of states of regular language.
+		 * 
+		 * @see {@link RegularLanguage#states}
+		 */
+		private Set<State> states = new HashSet<>();
+		/**
+		 * A set of symbols of regular language.
+		 * 
+		 * @see {@link RegularLanguage#symbols}
+		 */
+		private Set<Symbol> symbols = new HashSet<>();
+		/**
+		 * A start state of regular language.
+		 * 
+		 * @see {@link RegularLanguage#start}
+		 */
+		private State start = null;
 
-	/**
-	 * Creates a language with given symbols and states.
-	 * 
-	 * @param symbols - Possible symbols of language.
-	 * @param states  - States of language.
-	 */
-	public RegularLanguage(Iterable<String> symbols, Iterable<String> states) {
-		this(symbols);
-		states.forEach(s -> this.states.add(new State(s)));
-	}
+		// States
+		/**
+		 * Adds a new state with name {@code name}. Equivalent with
+		 * {@code addState(new State(name))}.
+		 * 
+		 * @param name - A name of state to add.
+		 * @return A builder object.
+		 * @see {@link Builder#addState(State)}
+		 */
+		public Builder addStateS(String name) {
+			return this.addState(new State(name));
+		}
 
-	/**
-	 * Creates a language with given symbols, states, and a start state.
-	 * 
-	 * @param symbols - Possible symbols of language.
-	 * @param states  - States of language.
-	 * @param start   - A start state of language.
-	 */
-	public RegularLanguage(Iterable<String> symbols, Iterable<String> states, String start) {
-		this(symbols, states);
-		this.start = findState(start);
-	}
+		/**
+		 * Adds a new state {@code s}.
+		 * 
+		 * @param state - A state to add.
+		 * @return A builder object.
+		 */
+		public Builder addState(State state) {
+			states.add(state);
+			return this;
+		}
 
-	/**
-	 * Creates a language with given symbols, states, a start state, and end states.
-	 * 
-	 * @param symbols - Possible symbols of language.
-	 * @param states  - States of language.
-	 * @param start   - A start state of language.
-	 * @param ends    - A set of end states of language.
-	 */
-	public RegularLanguage(Iterable<String> symbols, Iterable<String> states, String start, Iterable<String> ends) {
-		this(symbols, states, start);
-		ends.forEach(s -> findState(s).setFinal());
+		/**
+		 * Adds states with given names {@code names}.
+		 * 
+		 * @param names - Names of states to add.
+		 * @return A builder object.
+		 */
+		public Builder addStatesS(Iterable<String> names) {
+			names.forEach(name -> addStateS(name));
+			return this;
+		}
+
+		/**
+		 * Adds given states.
+		 * 
+		 * @param states - States to add.
+		 * @return A builder object.
+		 */
+		public Builder addStates(Iterable<State> states) {
+			states.forEach(state -> addState(state));
+			return this;
+		}
+
+		// Symbols
+		/**
+		 * Adds a new symbol with given string {@code symbol}. Equivalent with
+		 * {@code addSymbol(new Symbol(symbol))}.
+		 * 
+		 * @param symbol - A string which indicates a symbol to add.
+		 * @return A builder object.
+		 * @see Builder#addSymbol(Symbol)
+		 */
+		public Builder addSymbolS(String symbol) {
+			return addSymbol(new Symbol(symbol));
+		}
+
+		/**
+		 * Adds a new symbol {@code symbol}.
+		 * 
+		 * @param symbol - A symbol to add.
+		 * @return A builder object.
+		 */
+		public Builder addSymbol(Symbol symbol) {
+			symbols.add(symbol);
+			return this;
+		}
+
+		/**
+		 * Adds symbols indicated by given strings {@code symbols}.
+		 * 
+		 * @param symbols - Strings of symbols to add.
+		 * @return A builder object.
+		 */
+		public Builder addSymbolsS(Iterable<String> symbols) {
+			symbols.forEach(symbol -> addSymbolS(symbol));
+			return this;
+		}
+
+		/**
+		 * Adds given symbols {@code symbols}.
+		 * 
+		 * @param symbols - Symbols to add.
+		 * @return A builder object.
+		 */
+		public Builder addSymbols(Iterable<Symbol> symbols) {
+			symbols.forEach(symbol -> addSymbol(symbol));
+			return this;
+		}
+
+		// Start state
+		/**
+		 * Set a start state defined by given name {@code start}.
+		 * 
+		 * @param start - A name of desired start state.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if state is not found.
+		 */
+		public Builder setStartS(String start) {
+			try {
+				this.start = states.stream().filter(state -> state.getName().equals(start)).iterator().next();
+			} catch (NoSuchElementException e) {
+				throw new IllegalArgumentException("Can't find a state with given name: " + start);
+			}
+			return this;
+		}
+
+		/**
+		 * Set a start state {@code start}.
+		 * 
+		 * @param start - A state to mark as start.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if state is not found.
+		 */
+		public Builder setStart(State start) {
+			if (!this.states.contains(start))
+				throw new IllegalArgumentException(
+						"Given state doesn't exist in the state set. Name: " + start.getName());
+			this.start = start;
+			return this;
+		}
+
+		// Final state
+		/**
+		 * Adds a final state defined by given name {@code end}.
+		 * 
+		 * @param end - A name of desired final state.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if state is not found.
+		 */
+		public Builder addFinalS(String end) {
+			try {
+				State s = states.stream().filter(state -> state.getName().equals(end)).iterator().next();
+				s.setFinal();
+			} catch (NoSuchElementException e) {
+				throw new IllegalArgumentException("Can't find a state with given name: " + end);
+			}
+			return this;
+		}
+
+		/**
+		 * Adds a final state {@code end}.
+		 * 
+		 * @param end - A state to mark as final.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if state is not found.
+		 */
+		public Builder addFinal(State end) {
+			if (!this.states.contains(end))
+				throw new IllegalArgumentException(
+						"Given state doesn't exist in the state set. Name: " + end.getName());
+			end.setFinal();
+			return this;
+		}
+
+		/**
+		 * Adds final states defined by given names {@code ends}.
+		 * 
+		 * @param ends - Names of states to mark as final.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if state is not found by any of given
+		 *                                  strings.
+		 */
+		public Builder addFinalsS(Iterable<String> ends) {
+			ends.forEach(end -> addFinalS(end));
+			return this;
+		}
+
+		/**
+		 * Adds final states {@code ends}.
+		 * 
+		 * @param ends - States to mark as final.
+		 * @return A builder object.
+		 * @throws IllegalArgumentException thrown if any of state is not found.
+		 */
+		public Builder addFinals(Iterable<State> ends) {
+			ends.forEach(end -> addFinal(end));
+			return this;
+		}
+
+		// Build
+		/**
+		 * Returns a regular language constructed by this builder.
+		 * 
+		 * @return A resulting regular language.
+		 */
+		public RegularLanguage build() {
+			RegularLanguage rl = new RegularLanguage();
+			rl.states = states;
+			rl.symbol = symbols;
+			rl.start = start;
+			return rl;
+		}
 	}
 
 	/**
