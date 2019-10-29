@@ -300,21 +300,6 @@ public class RegularLanguage implements Function<String, Boolean> {
 	}
 
 	/**
-	 * Set a start state with given id.
-	 * 
-	 * @param s - ID of state to set as a start state.
-	 * @return {@code true} if start state is successfully set.
-	 */
-	public boolean setStartState(String s) {
-		State st;
-		if ((st = findState(s)) != null) {
-			this.start = findState(s);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Returns a set of final states of this language.
 	 * 
 	 * @return A set of final states.
